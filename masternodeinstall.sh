@@ -1,9 +1,9 @@
 #!/bin/bash
 
-PORT=7429
-RPCPORT=7430
-CONF_DIR=~/.altecoin
-COINZIP='https://github.com/altecoin-altc/altecoin/releases/download/v1.2/altecoin-linux.zip'
+PORT=21778
+RPCPORT=21777
+CONF_DIR=~/.boco
+COINZIP='https://github.com/bocodev/BOCO/releases/download/v1.0/boco-1.0.0-x86_64-linux-gnu.zip'
 
 cd ~
 RED='\033[0;31m'
@@ -16,16 +16,16 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 function configure_systemd {
-  cat << EOF > /etc/systemd/system/altecoin.service
+  cat << EOF > /etc/systemd/system/boco.service
 [Unit]
-Description=ALtecoin Service
+Description=boco Service
 After=network.target
 [Service]
 User=root
 Group=root
 Type=forking
-ExecStart=/usr/local/bin/altecoind
-ExecStop=-/usr/local/bin/altecoin-cli stop
+ExecStart=/usr/local/bin/bocod
+ExecStop=-/usr/local/bin/boco-cli stop
 Restart=always
 PrivateTmp=true
 TimeoutStopSec=60s
@@ -37,8 +37,8 @@ WantedBy=multi-user.target
 EOF
   systemctl daemon-reload
   sleep 2
-  systemctl enable altecoin.service
-  systemctl start altecoin.service
+  systemctl enable boco.service
+  systemctl start boco.service
 }
 
 echo ""
@@ -51,15 +51,15 @@ then
   apt install zip unzip git curl wget -y
   cd /usr/local/bin/
   wget $COINZIP
-  unzip *.zip
-  rm altecoin-qt altecoin-tx altecoin-linux.zip
-  chmod +x altecoin*
+  unzip boco-1.0.0-x86_64-linux-gnu.zip
+  rm boco-qt boco-tx boco-1.0.0-x86_64-linux-gnu.zip
+  chmod +x boco*
   
   mkdir -p $CONF_DIR
   cd $CONF_DIR
-  wget http://cdn.delion.xyz/altc.zip
-  unzip altc.zip
-  rm altc.zip
+  wget https://downloads.masternodes.biz/snapshots/boco.zip
+  unzip boco.zip
+  rm boco.zip
 
 fi
 
@@ -71,21 +71,21 @@ fi
  echo "Enter masternode private key"
  read PRIVKEY
  
-  echo "rpcuser=user"`shuf -i 100000-10000000 -n 1` >> altecoin.conf_TEMP
-  echo "rpcpassword=pass"`shuf -i 100000-10000000 -n 1` >> altecoin.conf_TEMP
-  echo "rpcallowip=127.0.0.1" >> altecoin.conf_TEMP
-  echo "rpcport=$RPCPORT" >> altecoin.conf_TEMP
-  echo "listen=1" >> altecoin.conf_TEMP
-  echo "server=1" >> altecoin.conf_TEMP
-  echo "daemon=1" >> altecoin.conf_TEMP
-  echo "maxconnections=250" >> altecoin.conf_TEMP
-  echo "masternode=1" >> altecoin.conf_TEMP
-  echo "" >> altecoin.conf_TEMP
-  echo "port=$PORT" >> altecoin.conf_TEMP
-  echo "externalip=$IP:$PORT" >> altecoin.conf_TEMP
-  echo "masternodeaddr=$IP:$PORT" >> altecoin.conf_TEMP
-  echo "masternodeprivkey=$PRIVKEY" >> altecoin.conf_TEMP
-  mv altecoin.conf_TEMP altecoin.conf
+  echo "rpcuser=user"`shuf -i 100000-10000000 -n 1` >> boco.conf_TEMP
+  echo "rpcpassword=pass"`shuf -i 100000-10000000 -n 1` >> boco.conf_TEMP
+  echo "rpcallowip=127.0.0.1" >> boco.conf_TEMP
+  echo "rpcport=$RPCPORT" >> boco.conf_TEMP
+  echo "listen=1" >> boco.conf_TEMP
+  echo "server=1" >> boco.conf_TEMP
+  echo "daemon=1" >> boco.conf_TEMP
+  echo "maxconnections=250" >> boco.conf_TEMP
+  echo "masternode=1" >> boco.conf_TEMP
+  echo "" >> boco.conf_TEMP
+  echo "port=$PORT" >> boco.conf_TEMP
+  echo "externalip=$IP:$PORT" >> boco.conf_TEMP
+  echo "masternodeaddr=$IP:$PORT" >> boco.conf_TEMP
+  echo "masternodeprivkey=$PRIVKEY" >> boco.conf_TEMP
+  mv boco.conf_TEMP boco.conf
   cd
   echo ""
   echo -e "Your ip is ${GREEN}$IP:$PORT${NC}"
@@ -95,12 +95,12 @@ fi
   
 echo ""
 echo "Commands:"
-echo -e "Start Altecoin Service: ${GREEN}systemctl start altecoin${NC}"
-echo -e "Check Altecoin Status Service: ${GREEN}systemctl status altecoin${NC}"
-echo -e "Stop Altecoin Service: ${GREEN}systemctl stop altecoin${NC}"
-echo -e "Check Masternode Status: ${GREEN}altecoin-cli getmasternodestatus${NC}"
+echo -e "Start Boco Service: ${GREEN}systemctl start boco${NC}"
+echo -e "Check Boco Status Service: ${GREEN}systemctl status boco${NC}"
+echo -e "Stop Boco Service: ${GREEN}systemctl stop boco${NC}"
+echo -e "Check Masternode Status: ${GREEN}boco-cli getmasternodestatus${NC}"
 
 echo ""
-echo -e "${GREEN}Altecoin Masternode Installation Done${NC}"
+echo -e "${GREEN}Boco Masternode Installation Done${NC}"
 exec bash
 exit
